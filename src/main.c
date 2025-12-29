@@ -86,7 +86,7 @@ void app_main() {
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
     lv_display_set_buffers(lvgl_display,panel_lcd_transfer_buffer(),panel_lcd_transfer_buffer2(), LCD_TRANSFER_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL);
     lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
-    lv_timer_set_period(refr_timer,10);
+    lv_timer_set_period(refr_timer,5);
 #ifdef TOUCH_BUS
     lv_indev_t * indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); //Touchpad should have POINTER type 
