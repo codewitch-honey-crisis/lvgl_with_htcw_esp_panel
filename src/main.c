@@ -54,7 +54,7 @@ static void lvgl_task(void* state) {
 #endif
     while(1) {
 #ifdef RENDER_USE_SLEEP
-        // the the idle task feed the WDT to prevent a reboot
+        // let the idle task feed the WDT to prevent a reboot
         TickType_t ts = xTaskGetTickCount();
         if(ts>wdt_ts+200) {
             wdt_ts = ts;
@@ -89,7 +89,7 @@ void app_main() {
     lv_timer_set_period(refr_timer,10);
 #ifdef TOUCH_BUS
     lv_indev_t * indev = lv_indev_create();
-    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); /*Touchpad should have POINTER type*/
+    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); //Touchpad should have POINTER type 
     lv_indev_set_read_cb(indev, lvgl_on_touch_read);
 #endif
     // Use a task for LVGL rendering so we can set the stack size
