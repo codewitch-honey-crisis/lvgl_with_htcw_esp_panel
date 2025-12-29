@@ -1,10 +1,14 @@
 #include <stdint.h>
 #include <memory.h>
+#include "esp_task_wdt.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "panel.h"
 #include "lvgl.h"
 #include "demos/benchmark/lv_demo_benchmark.h"
+#if !defined(CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0) || CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0!=0
+#define RENDER_USE_SLEEP
+#endif
 static lv_display_t* lvgl_display = NULL;
 static void lvgl_on_flush( lv_display_t *disp, const lv_area_t *area, uint8_t * px_map) {
     panel_lcd_flush(area->x1,area->y1,area->x2,area->y2,px_map);
@@ -14,7 +18,7 @@ void panel_lcd_flush_complete() {
 }
 static uint32_t lvgl_get_ticks(void)
 {
-    return (uint32_t)xTaskGetTickCount();
+    return (uint32_t)pdTICKS_TO_MS(xTaskGetTickCount());
 }
 #if LV_USE_LOG != 0
 void lvgl_log( lv_log_level_t level, const char * buf )
@@ -41,15 +45,24 @@ void lvgl_on_touch_read( lv_indev_t * indev, lv_indev_data_t * data ) {
 }
 #endif
 static void lvgl_task(void* state) {
+#ifndef RENDER_USE_SLEEP
+    esp_task_wdt_add(NULL);
+#endif
     lv_demo_benchmark();
+#ifdef RENDER_USE_SLEEP    
     TickType_t wdt_ts = xTaskGetTickCount();
+#endif
     while(1) {
-        // feed the WDT to prevent a reboot
-        TickType_t ticks = xTaskGetTickCount();
-        if(ticks>=wdt_ts+200) {
-            wdt_ts = ticks;
+#ifdef RENDER_USE_SLEEP
+        // the the idle task feed the WDT to prevent a reboot
+        TickType_t ts = xTaskGetTickCount();
+        if(ts>wdt_ts+200) {
+            wdt_ts = ts;
             vTaskDelay(5);
         }
+#else
+        esp_task_wdt_reset();
+#endif
         lv_timer_handler();
     }
 }
@@ -72,6 +85,8 @@ void app_main() {
     lvgl_display = lv_display_create(LCD_WIDTH, LCD_HEIGHT);
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
     lv_display_set_buffers(lvgl_display,panel_lcd_transfer_buffer(),panel_lcd_transfer_buffer2(), LCD_TRANSFER_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL);
+    lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
+    lv_timer_set_period(refr_timer,10);
 #ifdef TOUCH_BUS
     lv_indev_t * indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); /*Touchpad should have POINTER type*/
