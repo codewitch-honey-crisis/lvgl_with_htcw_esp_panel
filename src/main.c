@@ -18,6 +18,7 @@ void panel_lcd_flush_complete() {
 }
 static uint32_t lvgl_get_ticks(void)
 {
+    
     return (uint32_t)pdTICKS_TO_MS(xTaskGetTickCount());
 }
 #if LV_USE_LOG != 0

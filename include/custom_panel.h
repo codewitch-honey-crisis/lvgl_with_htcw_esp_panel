@@ -25,7 +25,7 @@
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
 };
-#define LCD_TRANSLATE static uint8_t ssd1306_buffer[(LCD_HRES*LCD_VRES*LCD_BIT_DEPTH+7)/8];\
+#define LCD_TRANSLATE static uint8_t ssd1306_buffer[LCD_TRANSFER_SIZE];\
      int src_width = x2 - x1 + 1;\
      int dst_width = src_width;\
      int dst_height_pages = (y2 - y1 + 1) >> 3;  /* Height in pages (8-pixel groups) */\
