@@ -38,6 +38,7 @@ void lvgl_on_touch_read( lv_indev_t * indev, lv_indev_data_t * data ) {
     }
 }
 #endif
+
 static void lvgl_task(void* state) {
 #ifndef RENDER_USE_SLEEP
     esp_task_wdt_add(NULL);
