@@ -42,22 +42,23 @@ static void lvgl_task(void* state) {
 #ifndef RENDER_USE_SLEEP
     esp_task_wdt_add(NULL);
 #endif
+    // eliminating this call does not solve the issue:
     lv_demo_benchmark();
 #ifdef RENDER_USE_SLEEP    
-    TickType_t wdt_ts = xTaskGetTickCount();
+    TickType_t wdt_ts = 0;
 #endif
     while(1) {
 #ifdef RENDER_USE_SLEEP
         // let the idle task feed the WDT to prevent a reboot
         TickType_t ts = xTaskGetTickCount();
-        if(ts>wdt_ts+200) {
+        if(ts>wdt_ts+100) {
             wdt_ts = ts;
             vTaskDelay(5);
         }
 #else
         esp_task_wdt_reset();
 #endif
-        lv_timer_handler();
+       lv_timer_handler();
     }
 }
 void app_main() {
@@ -75,12 +76,19 @@ void app_main() {
     panel_sd_init(false,0,0);
 #endif
     lv_init();
-    lv_tick_set_cb(lvgl_get_ticks);
+    lv_tick_set_cb(lvgl_get_ticks); // pdMS_TO_TICKS(xTaskGetTickCount())
+    // 128, 64:
     lvgl_display = lv_display_create(LCD_WIDTH, LCD_HEIGHT);
+    assert(lvgl_display);
+    // these are both 1024 in size
+    assert(panel_lcd_transfer_buffer());
+    assert(panel_lcd_transfer_buffer2());
+    // i've tried with both full screen and partial updates and i seem to get the same issue
+    lv_display_set_buffers(lvgl_display,panel_lcd_transfer_buffer(),panel_lcd_transfer_buffer2(), LCD_TRANSFER_SIZE, LCD_FULLSCREEN_TRANSFER==1?LV_DISP_RENDER_MODE_FULL:LV_DISP_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
-    lv_display_set_buffers(lvgl_display,panel_lcd_transfer_buffer(),panel_lcd_transfer_buffer2(), LCD_TRANSFER_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL);
-    lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
-    lv_timer_set_period(refr_timer,5);
+    
+    //lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
+    //lv_timer_set_period(refr_timer,5);
 #ifdef TOUCH_BUS
     lv_indev_t * indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); //Touchpad should have POINTER type 
@@ -89,5 +97,4 @@ void app_main() {
     // Use a task for LVGL rendering so we can set the stack size
     TaskHandle_t task_handle;
     xTaskCreate(lvgl_task,"lvgl_task",LV_DRAW_THREAD_STACK_SIZE,NULL,uxTaskPriorityGet(NULL),&task_handle);
-    
 }
