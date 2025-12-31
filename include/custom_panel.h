@@ -25,7 +25,7 @@
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
 };
-#define LCD_TRANSFER_SIZE (1024+64)
+#define LCD_TRANSFER_SIZE (1024+8)
 #define LCD_TRANSLATE static uint8_t ssd1306_buffer[LCD_TRANSFER_SIZE];\
     /* full screen transfers */ \
     bitmap = ((uint8_t*)bitmap)+8;\
@@ -79,7 +79,7 @@
 #define LCD_INVERT_COLOR false
 #define LCD_SWAP_XY false
 #define LCD_DIVISOR 1
-#define LCD_TRANSFER_SIZE (1024+64)
+#define LCD_TRANSFER_SIZE (1024+8)
 #define LCD_Y_ALIGN 8
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
