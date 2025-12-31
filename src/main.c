@@ -78,6 +78,9 @@ void app_main() {
 #ifdef BUTTON
     panel_button_init();
 #endif
+#ifdef SD_BUS
+    panel_sd_init(false,0,0);
+#endif
     lv_init();
     lv_tick_set_cb(lvgl_get_ticks);
 #if LV_USE_LOG !=0
