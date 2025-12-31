@@ -21,14 +21,7 @@ static uint32_t lvgl_get_ticks(void)
     
     return (uint32_t)pdTICKS_TO_MS(xTaskGetTickCount());
 }
-#if LV_USE_LOG != 0
-void lvgl_log( lv_log_level_t level, const char * buf )
-{
-    LV_UNUSED(level);
-    puts(buf);
-    fflush(stdout);
-}
-#endif
+
 #ifdef TOUCH_BUS
 void lvgl_on_touch_read( lv_indev_t * indev, lv_indev_data_t * data ) {
     panel_touch_update();
@@ -83,9 +76,6 @@ void app_main() {
 #endif
     lv_init();
     lv_tick_set_cb(lvgl_get_ticks);
-#if LV_USE_LOG !=0
-    lv_log_register_print_cb(lvgl_log);
-#endif
     lvgl_display = lv_display_create(LCD_WIDTH, LCD_HEIGHT);
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
     lv_display_set_buffers(lvgl_display,panel_lcd_transfer_buffer(),panel_lcd_transfer_buffer2(), LCD_TRANSFER_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL);
