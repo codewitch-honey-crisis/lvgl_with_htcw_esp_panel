@@ -22,6 +22,7 @@
 #define LCD_SWAP_XY false
 #define LCD_DIVISOR 1
 #define LCD_Y_ALIGN 8
+#define LCD_FULLSCREEN_TRANSFER 1
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
 };
@@ -80,6 +81,7 @@
 #define LCD_SWAP_XY false
 #define LCD_DIVISOR 1
 #define LCD_TRANSFER_SIZE (1024+8)
+#define LCD_FULLSCREEN_TRANSFER 1
 #define LCD_Y_ALIGN 8
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
