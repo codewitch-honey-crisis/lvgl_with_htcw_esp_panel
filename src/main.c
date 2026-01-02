@@ -12,10 +12,15 @@
 static lv_display_t* lvgl_display = NULL;
 static void lvgl_on_flush( lv_display_t *disp, const lv_area_t *area, uint8_t * px_map) {
     panel_lcd_flush(area->x1,area->y1,area->x2,area->y2,px_map);
+#ifdef LCD_NO_DMA
+    lv_display_flush_ready(lvgl_display);
+#endif
 }
+#ifndef LCD_NO_DMA
 void panel_lcd_flush_complete() {
     lv_display_flush_ready(lvgl_display);
 }
+#endif
 static uint32_t lvgl_get_ticks(void)
 {
     
@@ -78,14 +83,17 @@ void app_main() {
 #endif
     lv_init();
     lv_tick_set_cb(lvgl_get_ticks); // pdMS_TO_TICKS(xTaskGetTickCount())
-    // 128, 64:
     lvgl_display = lv_display_create(LCD_WIDTH, LCD_HEIGHT);
     assert(lvgl_display);
-    // these are both 1024 in size
-    assert(panel_lcd_transfer_buffer());
-    assert(panel_lcd_transfer_buffer2());
-    // i've tried with both full screen and partial updates and i seem to get the same issue
-    lv_display_set_buffers(lvgl_display,panel_lcd_transfer_buffer(),panel_lcd_transfer_buffer2(), LCD_TRANSFER_SIZE, LCD_FULLSCREEN_TRANSFER==1?LV_DISP_RENDER_MODE_FULL:LV_DISP_RENDER_MODE_PARTIAL);
+        
+    lv_display_set_buffers(lvgl_display,
+        panel_lcd_transfer_buffer(),
+#ifndef LCD_NO_DMA
+        panel_lcd_transfer_buffer2(), 
+#else
+        NULL,
+#endif
+        LCD_TRANSFER_SIZE, LCD_FULLSCREEN_TRANSFER==1?LV_DISP_RENDER_MODE_FULL:LV_DISP_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
     
     //lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
