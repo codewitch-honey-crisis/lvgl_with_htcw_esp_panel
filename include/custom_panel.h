@@ -1,7 +1,7 @@
 // you don't actually need a #ifdef guard on a custom panel for many projects, only for projects where you might support more than one device (either custom, or otherwise)
 #ifdef C6DEVKITC1 // Works, but is a custom kit
 #define LCD_I2C_HOST    0
-#define LCD_I2C_ADDR 0x3C
+#define LCD_I2C_ADDRESS 0x3C
 #define LCD_I2C_PULLUP 1
 #define LCD_CONTROL_PHASE_BYTES 1
 #define LCD_DC_BIT_OFFSET 6
@@ -9,7 +9,7 @@
 #define LCD_PIN_NUM_SCL 11
 #define LCD_PIN_NUM_SDA 10
 #define LCD_PIN_NUM_RST -1
-#define LCD_PANEL esp_lcd_new_panel_ssd1306
+#define LCD_INIT esp_lcd_new_panel_ssd1306
 #define LCD_HRES 128
 #define LCD_VRES 64
 #define LCD_COLOR_SPACE LCD_COLOR_GSC
@@ -60,7 +60,7 @@
 
 #ifdef ESP32_S3_DEVKITC_1
 #define LCD_I2C_HOST    0
-#define LCD_I2C_ADDR 0x3C
+#define LCD_I2C_ADDRESS 0x3C
 #define LCD_I2C_PULLUP 1
 #define LCD_CONTROL_PHASE_BYTES 1
 #define LCD_DC_BIT_OFFSET 6
@@ -68,7 +68,7 @@
 #define LCD_PIN_NUM_SCL 7
 #define LCD_PIN_NUM_SDA 6
 #define LCD_PIN_NUM_RST -1
-#define LCD_PANEL esp_lcd_new_panel_ssd1306
+#define LCD_INIT esp_lcd_new_panel_ssd1306
 #define LCD_HRES 128
 #define LCD_VRES 64
 #define LCD_COLOR_SPACE LCD_COLOR_GSC
