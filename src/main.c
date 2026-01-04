@@ -12,11 +12,11 @@
 static lv_display_t* lvgl_display = NULL;
 static void lvgl_on_flush( lv_display_t *disp, const lv_area_t *area, uint8_t * px_map) {
     panel_lcd_flush(area->x1,area->y1,area->x2,area->y2,px_map);
-#ifdef LCD_NO_DMA
+#ifdef LCD_SYNC_TRANSFER
     lv_display_flush_ready(lvgl_display);
 #endif
 }
-#ifndef LCD_NO_DMA
+#ifndef LCD_SYNC_TRANSFER
 void panel_lcd_flush_complete() {
     lv_display_flush_ready(lvgl_display);
 }
@@ -87,7 +87,7 @@ void app_main() {
         
     lv_display_set_buffers(lvgl_display,
         panel_lcd_transfer_buffer(),
-#ifndef LCD_NO_DMA
+#ifndef LCD_SYNC_TRANSFER
         panel_lcd_transfer_buffer2(), 
 #else
         NULL,
