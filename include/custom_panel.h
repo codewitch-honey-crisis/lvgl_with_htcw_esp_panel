@@ -72,7 +72,7 @@
 #define LCD_HRES 128
 #define LCD_VRES 64
 #define LCD_COLOR_SPACE LCD_COLOR_GSC
-#define LCD_CLOCK_HZ (200 * 1000)
+#define LCD_CLOCK_HZ (800 * 1000)
 #define LCD_GAP_X 0
 #define LCD_GAP_Y 0
 #define LCD_MIRROR_X true

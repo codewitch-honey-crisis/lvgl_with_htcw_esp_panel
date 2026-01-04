@@ -3,6 +3,7 @@
 #include "esp_task_wdt.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
 #include "panel.h"
 #include "lvgl.h"
 #include "demos/benchmark/lv_demo_benchmark.h"
