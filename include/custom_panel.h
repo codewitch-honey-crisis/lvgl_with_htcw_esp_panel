@@ -70,7 +70,7 @@
 #define LCD_PIN_NUM_RST -1
 #define LCD_INIT esp_lcd_new_panel_ssd1306
 #define LCD_HRES 128
-#define LCD_VRES 64
+#define LCD_VRES 32
 #define LCD_COLOR_SPACE LCD_COLOR_GSC
 #define LCD_CLOCK_HZ (800 * 1000)
 #define LCD_GAP_X 0
@@ -80,7 +80,7 @@
 #define LCD_INVERT_COLOR false
 #define LCD_SWAP_XY false
 #define LCD_DIVISOR 1
-#define LCD_TRANSFER_SIZE (1024+8)
+#define LCD_TRANSFER_SIZE (512+8)
 #define LCD_FULLSCREEN_TRANSFER 1
 #define LCD_Y_ALIGN 8
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
@@ -116,3 +116,24 @@
      }\
      bitmap = ssd1306_buffer;
 #endif // ESP32_S3_DEVKITC_1
+
+#ifdef IDEASPARK_19
+// BEGIN LCD configuration
+#define LCD_INIT esp_lcd_new_panel_st7789
+#define LCD_HRES 170
+#define LCD_VRES 320
+#define LCD_INVERT_COLOR 1
+#define LCD_GAP_Y 35
+#define LCD_SWAP_XY 1
+#define LCD_MIRROR_Y 1
+#define LCD_DIVISOR 4
+#define LCD_SPI_HOST SPI_3
+#define LCD_CLOCK_HZ ((uint32_t)(40*(1000*1000)))
+#define LCD_PIN_NUM_RST 4
+#define LCD_PIN_NUM_BCKL 32
+#define LCD_PIN_NUM_MOSI 23
+#define LCD_PIN_NUM_CLK 18
+#define LCD_PIN_NUM_CS 15
+#define LCD_PIN_NUM_DC 2
+// END LCD configuration
+#endif
