@@ -18,10 +18,11 @@ static void lvgl_on_flush( lv_display_t *disp, const lv_area_t *area, uint8_t * 
 #endif
 }
 #ifndef LCD_SYNC_TRANSFER
-void panel_lcd_flush_complete() {
+void panel_lcd_flush_complete(void) {
     lv_display_flush_ready(lvgl_display);
 }
 #endif
+
 static uint32_t lvgl_get_ticks(void)
 {
     
@@ -64,7 +65,10 @@ static void lvgl_task(void* state) {
 #else
         esp_task_wdt_reset();
 #endif
-       lv_timer_handler();
+       
+       if(!panel_lcd_vsync_flush_count()) {
+        lv_timer_handler();
+       }
     }
 }
 void app_main() {
@@ -83,6 +87,7 @@ void app_main() {
 #endif
     lv_init();
     lv_tick_set_cb(lvgl_get_ticks); 
+    
     lvgl_display = lv_display_create(LCD_WIDTH, LCD_HEIGHT);
     assert(lvgl_display);
         
@@ -95,6 +100,7 @@ void app_main() {
 #endif
         LCD_TRANSFER_SIZE, LCD_FULLSCREEN_TRANSFER==1?LV_DISP_RENDER_MODE_FULL:LV_DISP_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
+    
     // set the effective FPS cap to 100
     lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
     lv_timer_set_period(refr_timer,5);
