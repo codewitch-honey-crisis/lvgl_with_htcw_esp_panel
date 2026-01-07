@@ -13,11 +13,11 @@
 static lv_display_t* lvgl_display = NULL;
 static void lvgl_on_flush( lv_display_t *disp, const lv_area_t *area, uint8_t * px_map) {
     panel_lcd_flush(area->x1,area->y1,area->x2,area->y2,px_map);
-#ifdef LCD_SYNC_TRANSFER
+#if LCD_SYNC_TRANSFER > 0
     lv_display_flush_ready(lvgl_display);
 #endif
 }
-#ifndef LCD_SYNC_TRANSFER
+#if LCD_SYNC_TRANSFER == 0
 void panel_lcd_flush_complete(void) {
     lv_display_flush_ready(lvgl_display);
 }
