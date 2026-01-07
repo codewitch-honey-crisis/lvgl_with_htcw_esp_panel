@@ -45,6 +45,22 @@ void lvgl_on_touch_read( lv_indev_t * indev, lv_indev_data_t * data ) {
     }
 }
 #endif
+#if (defined(LCD_X_ALIGN) && LCD_X_ALIGN > 1) || (defined(LCD_Y_ALIGN) && LCD_Y_ALIGN > 1)
+static void lvgl_align_cb(lv_event_t *e)
+{
+    lv_area_t *area = lv_event_get_param(e);
+#if (defined(LCD_X_ALIGN) && LCD_X_ALIGN > 1)
+    /* Round the width to the nearest multiple of 8 */
+    area->x1 = (area->x1 & ~(LCD_X_ALIGN-1));
+    area->x2 = (area->x2 | (LCD_X_ALIGN-1));
+#endif
+#if (defined(LCD_Y_ALIGN) && LCD_Y_ALIGN > 1)
+    /* Round the height to the nearest multiple of 8 */
+    area->y1 = (area->y1 & ~(LCD_Y_ALIGN-1));
+    area->y2 = (area->y2 | (LCD_Y_ALIGN-1));
+#endif
+}
+#endif
 
 static void lvgl_task(void* state) {
 #ifndef RENDER_USE_SLEEP
@@ -66,9 +82,9 @@ static void lvgl_task(void* state) {
         esp_task_wdt_reset();
 #endif
        
-       if(!panel_lcd_vsync_flush_count()) {
+       //if(!panel_lcd_vsync_flush_count()) {
         lv_timer_handler();
-       }
+       //}
     }
 }
 void app_main() {
@@ -100,7 +116,9 @@ void app_main() {
 #endif
         LCD_TRANSFER_SIZE, LCD_FULLSCREEN_TRANSFER==1?LV_DISP_RENDER_MODE_FULL:LV_DISP_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(lvgl_display, lvgl_on_flush);
-    
+#if (defined(LCD_X_ALIGN) && LCD_X_ALIGN > 1) || (defined(LCD_Y_ALIGN) && LCD_Y_ALIGN > 1)
+    lv_display_add_event_cb(lvgl_display, lvgl_align_cb, LV_EVENT_INVALIDATE_AREA, NULL);
+#endif
     // set the effective FPS cap to 100
     lv_timer_t* refr_timer = lv_display_get_refr_timer(lvgl_display);
     lv_timer_set_period(refr_timer,5);
