@@ -22,13 +22,13 @@
 #define LCD_SWAP_XY false
 #define LCD_DIVISOR 1
 #define LCD_Y_ALIGN 8
+#define LCD_TRANSFER_PALETTE 1
 #define LCD_FULLSCREEN_TRANSFER 1
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
 };
-#define LCD_TRANSFER_SIZE (1024+8)
 #define LCD_TRANSLATE static uint8_t ssd1306_buffer[LCD_TRANSFER_SIZE];\
-    bitmap = ((uint8_t*)bitmap)+8; \
+    bitmap = ((uint8_t*)bitmap)+LCD_TRANSFER_PALETTE_SIZE; \
      int src_width = x2 - x1 + 1;\
      int dst_width = src_width;\
      int dst_height_pages = (y2 - y1 + 1) >> 3;  /* Height in pages (8-pixel groups) */\
@@ -75,13 +75,13 @@
 #define LCD_INVERT_COLOR false
 #define LCD_SWAP_XY false
 #define LCD_DIVISOR 1
-#define LCD_TRANSFER_SIZE (1024+8)
 #define LCD_Y_ALIGN 8
+#define LCD_TRANSFER_PALETTE 1
 #define LCD_VENDOR_CONFIG esp_lcd_panel_ssd1306_config_t vendor_config = {\
     .height = LCD_VRES,\
 };
 #define LCD_TRANSLATE static uint8_t ssd1306_buffer[LCD_TRANSFER_SIZE];\
-    bitmap = ((uint8_t*)bitmap)+8; \
+    bitmap = ((uint8_t*)bitmap)+LCD_TRANSFER_PALETTE_SIZE; \
      int src_width = x2 - x1 + 1;\
      int dst_width = src_width;\
      int dst_height_pages = (y2 - y1 + 1) >> 3;  /* Height in pages (8-pixel groups) */\
